@@ -9,7 +9,7 @@ fast-c: fast.c
 	$(CC) $(CFLAGS) -o fast-c fast.c
 
 fast-scm: fastSCM.scm
-	$(CHICKEN) fastSCM.scm
+	$(CHICKEN) -o fast-scm fastSCM.scm
 
 clean:
 	rm -vf fast-c fast-scm *.o

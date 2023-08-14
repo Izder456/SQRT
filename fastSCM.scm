@@ -1,32 +1,14 @@
 ;; Load necessary libraries
-(import (srfi 27))  ; Library for bitwise operations
-(import (srfi 4)) ; library for u32vector
 (import (chicken random))
 
-;; Define the Q_rsqrt function
-(define (Q-rsqrt number)
-  ;; Constants
-  (let* ((threehalfs 1.5)
-         ;; Calculate half of the input number
-         (x2 (* number 0.5))
-         ;; Convert the input number to bytes for manipulation
-         (y number)
-         ;; Convert bytes to a 32-bit unsigned integer
-         (i (vector-ref (bytes->u32vector 
-                (bytes-ref (u32vector->bytes 
-                  (vector->u32vector 
-                    (list->vector (list 0x5f3759df))))) 0) 0))
-         ;; Convert the floating-point value y to bytes
-         (int-y (u32vector->bytes (vector 
-                  (u32vector-ref (bytes->u32vector 
-                    (u32vector->bytes (vector y))) 0)))))
-    ;; Perform bit manipulation on the integer representation of y
-    (set-u32vector! int-y 0 (- (u32vector-ref int-y 0) (arithmetic-shift i -1)))
-    ;; Convert the bytes back to a floating-point value
-    (set! y (bytes->float int-y))
-    ;; Perform the Quake inverse square root algorithm
-    (set! y (* y (- threehalfs (* x2 (* y y)))))
-    y))  ; Return the result of the algorithm
+;; absolute value
+(define (abso x) (if (< x 0) (* -1 x) x))
+
+;; newtons method of finding squares
+(define (sqrt guess number)
+        (if (< (abso(- (* guess guess) number)) 0.01) ; if the square of guess is < number => return 0.01
+        guess ; take another guess with return val of last expr
+        (sqrt (/ (+ guess (/ number guess)) 2) number))) ;  average guess and (number / guess), and return
 
 ;; Define the main function
 (define (main)
@@ -34,8 +16,8 @@
   (let loop ((i 0)  ; Counter for the loop
              (res 0.0))  ; Result storage
     (if (< i 1000000)  ; Check if the loop should continue
-        (let* ((r (random-integer 4294967296))  ; Generate a random 32-bit integer
-               (q (Q-rsqrt r)))  ; Apply Q_rsqrt function
+	(let* ((r (random-integer 8192))  ; Generate a random 32-bit integer
+               (q (sqrt 1 r)))  ; Apply Q_rsqrt function
           (loop (+ i 1) q))  ; Recursively continue the loop
         0)))  ; Return 0 when the loop is complete
 
