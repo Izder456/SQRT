@@ -20,7 +20,7 @@ int main () {
     float res;
     for ( i = 0; i < 1000000; i++) {
         srand(time(NULL));
-        float r = rand();
+        float r = rand() % 8192;
         res = Q_rsqrt(r);
     };
     return 0;
