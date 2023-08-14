@@ -16,7 +16,7 @@
   (let loop ((i 0)  ; Counter for the loop
              (res 0.0))  ; Result storage
     (if (< i 1000000)  ; Check if the loop should continue
-	(let* ((r (random-integer 8192))  ; Generate a random 32-bit integer
+	(let* ((r (pseudo-random-integer 8192))  ; Generate a random 32-bit integer
                (q (sqrt 1 r)))  ; Apply Q_rsqrt function
           (loop (+ i 1) q))  ; Recursively continue the loop
         0)))  ; Return 0 when the loop is complete
